@@ -1,0 +1,62 @@
+#!/usr/bin/env ruby
+#
+# @requirements:
+#   gem install aws-sdk-rds
+#   gem install colorize
+#   gem install awesome_print
+#
+# @setup:
+#   export AWS_ACCESS_KEY_ID=aaaaaaaaa
+#   export AWS_SECRET_ACCESS_KEY=aaaaaa
+#   export AWS_DEFAULT_REGION=aaaaaaaaa
+#   export AWS_DB_INSTANCE_IDENTIFIER=cloud-platform-aaaaaaaaa
+#
+# @examples:
+#   $ bin/rds -c describe-db-instances
+#   $ bin/rds -c describe-db-snapshots
+#   $ bin/rds -c create-db-snapshot -w
+#   $ bin/rds -c describe-db-snapshots -i my-other-db-instance-identifier
+#
+require 'colorize'
+require 'optparse'
+require 'ostruct'
+require 'aws-sdk-rds'
+require 'awesome_print'
+
+require_relative '../lib/commands'
+require_relative '../lib/rds_opt_parser'
+
+include Commands
+
+def client
+  @client ||= Aws::RDS::Client.new(
+    region: ENV['AWS_DEFAULT_REGION'],
+    access_key_id: ENV['AWS_ACCESS_KEY_ID'],
+    secret_access_key: ENV['AWS_SECRET_ACCESS_KEY']
+  )
+end
+
+def options
+  @options ||= RdsOptParser.parse(ARGV)
+end
+
+def command
+  options.command
+end
+
+def db_identifier
+  @db_identifier ||= { db_instance_identifier: options.identifier || ENV['AWS_DB_INSTANCE_IDENTIFIER'] }
+end
+
+def snapshot_identifier
+  @snapshot_identifier ||= { db_snapshot_identifier: "#{db_identifier[:db_instance_identifier]}-manual-snapshot-#{Time.now.utc.strftime('%Y-%m-%d-%H-%M')}" }
+end
+
+def request
+  return send(command, db_identifier) if self.methods.include?(command)
+
+  response = client.send(command, db_identifier)
+  response.to_h
+end
+
+ap request
