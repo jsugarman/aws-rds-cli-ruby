@@ -6,7 +6,7 @@
 #
 # for each command available to
 # [aws rds cli](https://docs.aws.amazon.com/cli/latest/reference/rds/)
-# and available in the [aws-rds-sdk client](https://docs.aws.amazon.com/sdk-for-ruby/v3/api/Aws/RDS/Client.html#wait_until-instance_method)
+# and available in the [aws-rds-sdk client](https://docs.aws.amazon.com/sdk-for-ruby/v3/api/Aws/RDS/Client.html)
 # you can define a method here to customize
 # its behaviour.
 #
@@ -41,7 +41,7 @@ module Commands
     end
   end
 
-  # custom create_db_snapshot
+  # custom create_db_snapshot, waits for snapshot to be available
   #
   def create_db_snapshot(db_identifier)
     params = db_identifier.merge(snapshot_identifier)
