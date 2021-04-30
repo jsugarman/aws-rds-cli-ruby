@@ -21,7 +21,9 @@ module Commands
       {
         db_snapshot_identifier: snapshot[:db_snapshot_identifier],
         snapshot_create_time: snapshot[:snapshot_create_time],
-        status: snapshot[:status]
+        status: snapshot[:status],
+        engine: "#{snapshot[:engine]} v#{snapshot[:engine_version]}"
+
       }
     end.sort_by { |snapshot| snapshot[:snapshot_create_time]&.to_datetime || DateTime.now }.reverse
   end
