@@ -15,7 +15,7 @@
 module Commands
   # custom filtered outoutput for describe_db_snapshots
   #
-  def describe_db_snapshots(db_identifier)
+  def describe_db_snapshots(db_identifier, options = {})
     response = client.describe_db_snapshots(db_identifier)
     response.to_h[:db_snapshots].map do |snapshot|
       {
@@ -30,8 +30,24 @@ module Commands
 
   # custom filtered outoutput for describe_db_instances
   #
-  def describe_db_instances(db_identifier)
+  def describe_db_instances(db_identifier, options = nil)
     response = client.describe_db_instances(db_identifier)
+
+    if options.wait
+      current_status = response.to_h[:db_instances][0][:db_instance_status]
+      printf "#{current_status}.."
+
+      while !current_status.eql?("available")
+        response = client.describe_db_instances(db_identifier)
+        status_changed = !current_status.eql?(response.to_h[:db_instances][0][:db_instance_status])
+        current_status = response.to_h[:db_instances][0][:db_instance_status]
+        printf current_status.yellow if status_changed
+        print '.'.green
+        sleep 10
+      end
+      puts 'done'.green
+    end
+
     response.to_h[:db_instances].map do |instance|
       {
         db_instance_status: instance[:db_instance_status],
@@ -45,7 +61,7 @@ module Commands
 
   # custom create_db_snapshot, waits for snapshot to be available
   #
-  def create_db_snapshot(db_identifier)
+  def create_db_snapshot(db_identifier, options = {})
     params = db_identifier.merge(snapshot_identifier)
     response = client.create_db_snapshot(params)
 

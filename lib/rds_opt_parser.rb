@@ -25,6 +25,12 @@ class RdsOptParser
         options.identifier = id
       end
 
+      opts.on('-w',
+              '--wait',
+              'Optional: wait until status of instance is "availale".') do |bool|
+        options.wait = bool
+      end
+
       opts.on_tail('-h', '--help', 'Show this message') do
         puts opts
         exit
