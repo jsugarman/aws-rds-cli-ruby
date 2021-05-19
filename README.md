@@ -23,6 +23,12 @@ bin/rds -c create-db-snapshot
 bin/rds -c describe-db-snapshots -i my-other-db-instance-identifier
 ```
 
+## Wait for instance status to be available
+Useful if you are modifying a db-parameter-group or upgrading a DB instance
+```sh
+bin/rds -c describe-db-instances --wait
+```
+
 ## Customized commands
 the `Commands` module contains overides for some client methods to customize responses to output what ever is most pertinant, add waiting or doing anything else the client is able to do.
 

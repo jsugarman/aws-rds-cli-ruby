@@ -53,7 +53,7 @@ def snapshot_identifier
 end
 
 def request
-  return send(command, db_identifier) if self.methods.include?(command)
+  return send(command, db_identifier, options) if self.methods.include?(command)
 
   response = client.send(command, db_identifier)
   response.to_h
