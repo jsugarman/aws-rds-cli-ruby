@@ -35,13 +35,13 @@ module Commands
 
     if options.wait
       current_status = response.to_h[:db_instances][0][:db_instance_status]
-      printf "#{current_status}.."
+      printf "[#{DateTime.now}] #{current_status}..".yellow
 
-      while !current_status.eql?("available")
+      while !%w[available stopped].include?(current_status)
         response = client.describe_db_instances(db_identifier)
         status_changed = !current_status.eql?(response.to_h[:db_instances][0][:db_instance_status])
         current_status = response.to_h[:db_instances][0][:db_instance_status]
-        printf current_status.yellow if status_changed
+        printf "\n[#{DateTime.now}] #{current_status}".yellow if status_changed
         print '.'.green
         sleep 10
       end
