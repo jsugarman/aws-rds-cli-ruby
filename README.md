@@ -1,5 +1,6 @@
 Simple wrapper for the [Aws::RDS::Client](https://docs.aws.amazon.com/sdk-for-ruby/v3/api/Aws/RDS/Client.html) with the aim of aiding upgrading in particular.
 
+
 ## Requirements:
 ```sh
 gem install aws-sdk-rds
